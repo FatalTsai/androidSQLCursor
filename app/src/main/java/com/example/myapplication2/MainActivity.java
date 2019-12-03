@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.widget.TextView;
@@ -13,6 +14,7 @@ public class MainActivity extends AppCompatActivity {
     static final String db_name ="testDB";
     static  final  String tb_name="test";
     SQLiteDatabase db;
+    String str;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,18 +30,32 @@ public class MainActivity extends AppCompatActivity {
                 "email VARCHAR(64) )";
         db.execSQL(CreateTable);
 
-        addData("Flag Publsihing Co.","02-23963257",
-                            "service@flag.com.tw");
 
-        addData("PCDIY Magazine","02-23214355",
-                "service@pcdiy.com.tw");
+        Cursor c=db.rawQuery("SELECT * FROM "+tb_name,null);
+
+        if(c.getCount() == 0)
+        {
+            addData("Flag Publsihing Co.","02-23963257",
+                    "service@flag.com.tw");
+
+            addData("PCDIY Magazine","02-23214355",
+                    "service@pcdiy.com.tw");
+        }
+        if(c.moveToFirst()) {
+            str = "There is " + c.getCount() + "datas\n";
+            str += "-------------\n";
+
+            do {
+                str += "name:" + c.getString(0) + "\n";
+                str += "phone:" + c.getString(1) + "\n";
+                str += "email:" + c.getString(2) + "\n";
+            } while (c.moveToNext());
 
 
-        TextView txv =(TextView)findViewById(R.id.txv);
-        txv.setText("path : "+db.getPath()+"\n"+
-                "page size : "+db.getPageSize()+" Bytes\n"+
-                "max size                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           : "+db.getMaximumSize()+" Bytes\n" );
+            TextView txv = (TextView) findViewById(R.id.txv);
+            txv.setText(str);
         db.close();
+        }
 }
 
 
