@@ -7,6 +7,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
@@ -25,14 +26,15 @@ public class MainActivity extends AppCompatActivity {
 
         String CreateTable = "CREATE TABLE IF NOT EXISTS "+
                 tb_name+
-                "( name VARCHAR(32)," +
-                "phone VARCHAR(32),"+
-                "email VARCHAR(64) )";
+                "( id VARCHAR(32)," +
+                "name VARCHAR(32),"+
+                "price VARCHAR(64) )";
         db.execSQL(CreateTable);
 
 
         Cursor c=db.rawQuery("SELECT * FROM "+tb_name,null);
 
+        Log.d("test",c.getCount()+"");
         if(c.getCount() == 0)
         {
             addData("Flag Publsihing Co.","02-23963257",
@@ -46,26 +48,26 @@ public class MainActivity extends AppCompatActivity {
             str += "-------------\n";
 
             do {
-                str += "name:" + c.getString(0) + "\n";
-                str += "phone:" + c.getString(1) + "\n";
-                str += "email:" + c.getString(2) + "\n";
+                str += "id:" + c.getString(0) + "\n";
+                str += "name:" + c.getString(1) + "\n";
+                str += "price:" + c.getString(2) + "\n";
             } while (c.moveToNext());
 
 
             TextView txv = (TextView) findViewById(R.id.txv);
             txv.setText(str);
-        db.close();
+            db.close();
         }
 }
 
 
-    private  void  addData(String name ,String phone,String email)
+    private  void  addData(String id ,String name,String price)
     {
         ContentValues cv =  new ContentValues(3);
 
+        cv.put("id",id);
         cv.put("name",name);
-        cv.put("phone",phone);
-        cv.put("email",email);
+        cv.put("price",price);
 
         db.insert(tb_name,null,cv);
     }
